@@ -9,7 +9,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-dark bg-primary">
+{{-- <nav class="navbar navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="#">Pengaduan Sarana & Prasarana Sekolah</a>
 
@@ -20,11 +20,12 @@
             </form>
         @endauth
     </div>
-</nav>
+</nav> --}}
 
 <div class="container mt-4">
     @yield('content')
 </div>
 
 </body>
+
 </html>

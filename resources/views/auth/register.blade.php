@@ -33,6 +33,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label>NIS (Opsional)</label>
+                        <input type="nis" name="nis" class="form-control" value="{{ old('email') }}">
+                    </div>
+
+                    <div class="mb-3">
                         <label>Nomor Telepon</label>
                         <input type="text" name="phone_number" class="form-control" value="{{ old('phone_number') }}">
                     </div>
@@ -43,7 +48,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Ulangi Password</label>
+                        <label>Korfirmasi Password</label>
                         <input type="password" name="password_confirmation" class="form-control">
                     </div>
 

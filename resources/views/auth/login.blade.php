@@ -1,47 +1,74 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('title', 'Login')
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h4 class="text-center mb-3">Login</h4>
+    <title>Login</title>
 
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        {{ $errors->first() }}
+    <!-- Custom fonts for this template -->
+    <link href="{{ asset('template/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ asset('template/css/sb-admin-2.min.css') }}" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-info">
+    <div class="container">
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center">
+                                <img src="{{ asset('img/logolapor.png') }}" alt="Register Image" style="width: 70%; max-width: 300px;">
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back To Laporku!</h1>
+                                    </div>
+                                    <form class="user" action="/login" method="POST">
+                                        @csrf
+                                        <div class="form-group">
+                                            <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Enter Email Address..." required>
+                                            @error('email')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
+                                            @error('password')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <input type="submit" class="btn btn-info btn-user btn-block" value="Login">
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <a class="small" href="/register">Belum punya akun? Daftar Disini</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                @endif
-
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                <form method="POST" action="/login">
-                    @csrf
-
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-
-                    <button class="btn btn-primary w-100">Login</button>
-                </form>
-
-                <div class="text-center mt-3">
-                    <a href="/register">Belum punya akun?</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
+
+    <!-- JavaScript Libraries -->
+    <script src="{{ asset('template/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('template/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('template/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('template/js/sb-admin-2.min.js') }}"></script>
+</body>
+
+</html>
