@@ -26,8 +26,8 @@
 </style>
 
 <div class="dashboard-header mb-4">
-    <h4 class="fw-bold mb-1">Dashboard Minimart</h4>
-    <p class="mb-0">Kelola transaksi dan stok dengan mudah.</p>
+    <h4 class="fw-bold mb-1">Dashboard Laporku!</h4>
+    <p class="mb-0"></p>
 </div>
 
 <div class="row">
