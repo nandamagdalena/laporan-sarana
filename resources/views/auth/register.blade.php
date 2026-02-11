@@ -1,103 +1,422 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <meta charset="UTF-8">
     <title>Register</title>
 
-    <!-- Custom fonts for this template -->
-    <link href="{{ asset('template/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+    {{-- Bootstrap --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="{{ asset('template/css/sb-admin-2.css') }}" rel="stylesheet">
+    {{-- Icons --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    {{-- Font --}}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('password_confirmation');
+    const errorText = document.getElementById('password-error');
+
+    function checkPassword() {
+        if (confirmPassword.value === '') {
+            errorText.classList.add('d-none');
+            confirmPassword.classList.remove('is-invalid');
+            return;
+        }
+
+        if (password.value !== confirmPassword.value) {
+            errorText.classList.remove('d-none');
+            confirmPassword.classList.add('is-invalid');
+        } else {
+            errorText.classList.add('d-none');
+            confirmPassword.classList.remove('is-invalid');
+        }
+    }
+
+    password.addEventListener('keyup', checkPassword);
+    confirmPassword.addEventListener('keyup', checkPassword);
+
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+        icon.addEventListener('click', function () {
+            const input = document.getElementById(this.dataset.target);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+            }
+        });
+    });
+</script>
+
+
+    <style>
+    body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+
+    /* Biru gradasi lembut & profesional */
+    background: linear-gradient(
+        135deg,
+        #0d47a1 0%,
+        #1565c0 35%,
+        #1e88e5 70%,
+        #42a5f5 100%
+    );
+}
+
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .left-section {
+            color: #fff;
+        }
+
+        .left-section h1 {
+            font-weight: 700;
+            font-size: 32px;
+        }
+
+        .left-section h2 {
+            font-weight: 600;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+
+        .left-section p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+      .form-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translate(-5px, -45px) scale(0.85);
+            transform-origin: top center;
+        }
+
+
+         /* SUB JUDUL (2 BARIS BOLD) */
+        .laporku-text h5 {
+            font-weight: 700;
+            margin-bottom: 10px;     /* jarak ke paragraf */
+            line-height: 1.15;       /* PENTING → supaya 2 baris rapat */
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+        }
+
+        
+       /* TEXT LAPORKU */
+        .laporku-text {
+            transform: translate(140px, -90px);
+            color: #fff;
+        }
+
+        /* JUDUL UTAMA */
+        .laporku-text h4 {
+            font-weight: 700;
+            margin-bottom: 4px;      /* rapatkan ke h5 */
+            line-height: 1.1;
+        }
+
+         /* NAMA SEKOLAH */
+        .school-name {
+            font-weight: normal;
+        }
+          /* PARAGRAF */
+        .laporku-text p {
+            margin-top: 0;
+            line-height: 1.3;
+            opacity: 0.9;
+        }
+
+         /* LOGO ATAS */
+        .logo-atas {
+            width: 240px;
+            transform: translate(40px, -50px);
+        }
+
+         /* ILUSTRASI BAWAH */
+        .laporanku-img {
+            width: 100%;
+            max-width: 470px;
+            transform: translate(80px, -150px);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 45px;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .btn-primary {
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        .error-text {
+            font-size: 12px;
+            color: red;
+            margin-top: 5px;
+        }
+
+        .is-invalid {
+    border-color: #dc3545;
+}
+
+        input[type="password"]::-webkit-password-eye {
+            display: none;
+        }
+        input[type="password"]::-ms-reveal {
+            display: none;
+        }
+
+        /* MATIKAN ICON ERROR BAWAAN BOOTSTRAP */
+.form-control.is-invalid {
+    background-image: none !important;
+    padding-right: 45px !important; /* biar icon mata tetap */
+}
+
+/* JAGA POSISI ICON */
+.position-relative {
+    position: relative;
+}
+
+.input-icon,
+.toggle-password {
+    z-index: 5;
+}
+
+/* Biar input tidak geser */
+.form-control {
+    box-shadow: none !important;
+}
+
+/* KUNCI TINGGI INPUT */
+.position-relative {
+    height: 52px; /* samakan dengan tinggi input */
+}
+
+/* ERROR JANGAN NGEDORONG LAYOUT */
+.error-text {
+    position: absolute;
+    bottom: -18px;
+    left: 0;
+    margin: 0;
+    font-size: 12px;
+}
+
+
+    </style>
 </head>
-<body class="bg-gradient-success">
-    <div class="container">
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center">
-                        <img src="{{ asset('img/logolapor.png') }}" alt="Register Image" style="width: 70%; max-width: 300px;">
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
-                            </div>
+<body>
 
-                            <form class="user" action="{{route ('register')}}" method="POST">
-                                @csrf
-                                <div class="form-group">
-                                    <input type="input" class="form-control form-control-user" id="name" name="name" placeholder="Nama Lengkap" required>
-                                    @error('name')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+<div class="container-fluid auth-wrapper">
+    <div class="row w-100 align-items-center">
 
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" name="email" id="email" placeholder="Email Address" required>
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+        
+       {{-- LOGO ATAS --}}
+        <img src="{{ asset('images/logo.png') }}" class="logo-atas">
 
-                                <div class="form-group">
-                                    <input type="input" class="form-control form-control-user" id="nis" name="nis" placeholder="Masukkan nis anda">
-                                    @error('nis')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+        {{-- TEXT --}}
+        <div class="laporku-text">
+            <h4 class="fw-bold">LAPORKU!</h4>
+            <h5 class="fw-bold">SATU LAPORAN, PERUBAHAN NYATA</h5>
 
-                                <div class="form-group">
-                                    <input type="input" class="form-control form-control-user" id="phone_number" name="phone_number" placeholder="Masukkan nomor telepon anda">
-                                    @error('phone_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+            <p class="mt-3">
+            Pengaduan sarana dan prasarana sekolah <br>
+            <strong class="school-name">SMKN 4 BOJONEGORO</strong>
+        </p>
 
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user" name="password" id="password" placeholder="Password" required>
-                                        @error('password')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user" name="password_confirmation" id="password_confirmation" placeholder="Repeat Password" required>
-                                    </div>
-                                </div>
+        </div>
+                    <img src="{{ asset('images/laporankulogo.png') }}"
+                        class="laporanku-img"
+                        alt="Ilustrasi Laporku">
 
-                                <input type="submit" class="btn btn-success btn-user btn-block" value="Register">
-                            </form>
-
-                            <hr>
-                            <div class="text-center">
-                                <a class="small" href="#">Forgot Password?</a>
-                            </div>
-                            <div class="text-center">
-                                <a class="small" href="{{route ('login')}}">Already have an account? Login!</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+
+        {{-- RIGHT FORM --}}
+        <div class="col-lg-7 offset-lg-1">
+            <div class="form-card">
+
+           <form id="register" action="{{ route('registerform') }}" method="get">
+
+                    {{-- Nama --}}
+                    <label class="form-label">Nama</label>
+                    <div class="mb-1 position-relative">
+                        <i class="bi bi-person input-icon"></i>
+                        <input type="text" class="form-control" placeholder="Masukkan nama Anda">
+                    </div>
+
+                    {{-- Email --}}
+                    <label class="form-label">Email</label>
+                    <div class="mb-1 position-relative">
+                        <i class="bi bi-envelope input-icon"></i>
+                        <input type="email" class="form-control" placeholder="Masukkan email Anda">
+                    </div>
+
+                    {{-- NIS --}}
+                    <label class="form-label">NIS</label>
+                    <div class="mb-1 position-relative">
+                        <i class="bi bi-card-text input-icon"></i>
+                        <input type="text" class="form-control" placeholder="Masukkan NIS Anda">
+                    </div>
+                    <small class="text-danger"></small>
+
+                    {{-- Telepon --}}
+                    <label class="form-label">No Tlp</label>
+                    <div class="mb-1 position-relative">
+                        <i class="bi bi-telephone input-icon"></i>
+                        <input type="text" class="form-control" placeholder="Masukkan no telepon Anda">
+                    </div>
+
+                    {{-- Password --}}
+                    <label class="form-label">Password</label>
+                     <div class="mb-1 position-relative">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input type="password" id="password" class="form-control"
+                               placeholder="Masukkan password">
+                        <i class="bi bi-eye-slash toggle-password"
+                           onclick="togglePassword('password', this)"></i>
+                    </div>
+
+<label class="form-label">Konfimasi Pasword</label>
+                    <div class="mb-1 position-relative">
+                        <i class="bi bi-lock input-icon"></i>
+
+                        <input type="password"
+                            id="password_confirmation"
+                            class="form-control"
+                            placeholder="Konfirmasi password">
+                            <small id="password-error" class="error-text d-none">
+    konfirmasi password anda salah</small>
+                        <i class="bi bi-eye-slash toggle-password"
+                        onclick="togglePassword('password_confirmation', this)"></i>
+                    </div>
+
+                    
+
+                 <button type="submit" class="btn btn-primary w-100 mt-4">
+    Daftar
+</button>
+<div class="text-center mt-3">
+                        
+                        </a>
+                          <p class="text-center mt-3 small-text">
+                        Sudah punya akun?
+                        <a href="{{ route('login') }}" class="fw-bold text-decoration-none">
+                            Login
+                        </a>
+                    </div>
+
+                </form>
+
             </div>
         </div>
+
     </div>
+</div>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="{{ asset('template/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('template/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("bi-eye-slash", "bi-eye");
+    } else {
+        input.type = "password";
+        icon.classList.replace("bi-eye", "bi-eye-slash");
+    }
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("password_confirmation");
+    const errorText = document.getElementById("password-error");
 
-    <!-- Core plugin JavaScript -->
-    <script src="{{ asset('template/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    function validateConfirmPassword() {
+        // reset dulu
+        confirmPassword.classList.remove("is-invalid");
+        errorText.classList.add("d-none");
 
-    <!-- Custom scripts for all pages -->
-    <script src="{{ asset('template/js/sb-admin-2.min.js') }}"></script>
+        // kalau salah satu kosong → DIAM
+        if (!password.value || !confirmPassword.value) return;
+
+        // kalau masih ngetik konfirmasi → DIAM
+        if (confirmPassword.value.length < password.value.length) return;
+
+        // VALIDASI HANYA KONFIRMASI
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add("is-invalid");
+            errorText.classList.remove("d-none");
+        }
+    }
+
+    confirmPassword.addEventListener("input", validateConfirmPassword);
+    password.addEventListener("input", validateConfirmPassword);
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registerForm");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("password_confirmation");
+    const errorText = document.getElementById("password-error");
+
+    form.addEventListener("submit", function (e) {
+        // reset error
+        confirmPassword.classList.remove("is-invalid");
+        errorText.classList.add("d-none");
+
+        // kalau kosong → stop
+        if (!password.value || !confirmPassword.value) {
+            e.preventDefault();
+            return;
+        }
+
+        // kalau tidak sama → STOP & TETAP DI REGISTER
+        if (password.value !== confirmPassword.value) {
+            e.preventDefault(); // ⛔ BLOK KE LOGIN
+            confirmPassword.classList.add("is-invalid");
+            errorText.classList.remove("d-none");
+            return;
+        }
+    });
+});
+</script>
+
+
+
 </body>
 </html>
