@@ -357,6 +357,23 @@ tbody tr:hover{
     <button class="btn btn-primary" onclick="openTambah()">+ Tambah Kategori</button>
 </div>
 
+{{-- ALERT SUCCESS DI SINI --}}
+@if(session('success'))
+<div style="margin-bottom:15px;padding:12px;background:#d1fae5;color:#065f46;border-radius:8px;">
+    {{ session('success') }}
+</div>
+@endif
+
+@if($errors->any())
+<div style="margin-bottom:15px;padding:12px;background:#fee2e2;color:#991b1b;border-radius:8px;">
+    <ul style="margin:0;padding-left:18px;">
+        @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 <div class="card">
 
    <div class="search-bar">
@@ -378,35 +395,80 @@ tbody tr:hover{
                 <th>Aksi</th>
             </tr>
         </thead>
-        <tbody id="kategoriBody"></tbody>
+        <tbody>
+            @forelse($categories as $index => $category)
+            <tr>
+                <td>{{ $categories->firstItem() + $index }}</td>
+                <td>{{ $category->name }}</td>
+                <td>{{ $category->created_at->format('d-m-Y') }}</td>
+                <td>
+                    <div class="aksi">
+
+                        <!-- EDIT -->
+                        <div class="icon-btn icon-edit"
+                            onclick="openEdit({{ $category->id }}, '{{ $category->name }}')">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
+                                <path d="M20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </div>
+
+                        <!-- DELETE -->
+                        <div class="icon-btn icon-delete"
+                            onclick="openDelete({{ $category->id }})">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/>
+                                <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4">Tidak ada data kategori</td>
+            </tr>
+            @endforelse
+        </tbody>
     </table>
 
     <!-- PAGINATION -->
     <div class="pagination">
-        <div id="infoData"></div>
-        <div class="page" id="pageBox"></div>
+        <div>
+            Menampilkan {{ $categories->firstItem() ?? 0 }}
+            - {{ $categories->lastItem() ?? 0 }}
+            dari {{ $categories->total() }} data
+        </div>
+        <div>
+            {{ $categories->links() }}
+        </div>
     </div>
-
 </div>
 </div>
 
 <!-- MODAL FORM -->
 <div class="modal" id="modalForm">
     <div class="modal-box">
-        <h4 id="modalTitle"></h4>
-        <small id="modalDesc"></small>
+        <form id="categoryForm" method="POST">
+            @csrf
+            <input type="hidden" name="_method" id="formMethod">
 
-        <div class="divider"></div>
+            <h4 id="modalTitle"></h4>
+            <small id="modalDesc"></small>
 
-        <div class="form-group">
-            <label>Nama Kategori <span style="color:red">*</span></label>
-            <input type="text" id="namaKategori" class="form-control">
-        </div>
+            <div class="divider"></div>
 
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
-            <button class="btn btn-primary" onclick="submitForm()">Simpan</button>
-        </div>
+            <div class="form-group">
+                <label>Nama Kategori <span style="color:red">*</span></label>
+                <input type="text" name="name" id="namaKategori" class="form-control" required>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -432,7 +494,7 @@ tbody tr:hover{
 
         <h2>Hapus Data?</h2>
         <p>
-            Data yang Anda pilih akan dihapus secara 
+            Data yang Anda pilih akan dihapus secara
             <b class="text-danger">permanen</b> dan tidak dapat dikembalikan.
         </p>
 
@@ -444,183 +506,63 @@ tbody tr:hover{
 
     </div>
 
+    <!-- FORM DELETE (WAJIB ADA) -->
+    <form id="deleteForm" method="POST" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
 </div>
 
 
 <script>
-const modalDelete = document.getElementById("deleteModal");
 const modalForm = document.getElementById("modalForm");
-const modalTitle = document.getElementById("modalTitle");
-const modalDesc = document.getElementById("modalDesc");
+const modalDelete = document.getElementById("deleteModal");
+const categoryForm = document.getElementById("categoryForm");
+const deleteForm = document.getElementById("deleteForm");
 const namaKategori = document.getElementById("namaKategori");
-const kategoriBody = document.getElementById("kategoriBody");
-const pageBox = document.getElementById("pageBox");
-const infoData = document.getElementById("infoData");
-const searchInput = document.getElementById("searchInput");
+const formMethod = document.getElementById("formMethod");
 
+let selectedId = null;
 
-let dataKategori=[
-    {nama:"Kelas",tanggal:"12-10-2025"},
-    {nama:"Toilet",tanggal:"12-10-2025"},
-    {nama:"Ruang Guru",tanggal:"12-10-2025"},
-    {nama:"UKS",tanggal:"12-10-2025"},
-    {nama:"Perpustakaan",tanggal:"12-10-2025"},
-    {nama:"Lapangan",tanggal:"12-10-2025"},
-    {nama:"Kantin",tanggal:"12-10-2025"},
-    {nama:"Gudang",tanggal:"12-10-2025"},
-    {nama:"Aula",tanggal:"12-10-2025"},
-    {nama:"Parkiran",tanggal:"12-10-2025"},
-    {nama:"Kelas",tanggal:"12-10-2025"},
-    {nama:"Toilet",tanggal:"12-10-2025"},
-];
-
-let filteredData = [...dataKategori]; // DATA SEARCH
-let currentPage=1;
-let rowsPerPage=5;
-let editIndex=null;
-let deleteIndex=null;
-
-//Open Modal
+// OPEN TAMBAH
 function openTambah(){
-    editIndex=null;
-    modalTitle.innerText="Tambah Kategori";
-    modalDesc.innerText="Tambahkan kategori yang Anda inginkan.";
-    namaKategori.value="";
     modalForm.style.display="flex";
+    categoryForm.action = "{{ route('category.store') }}";
+    formMethod.value = "POST";
+    namaKategori.value = "";
+    document.getElementById("modalTitle").innerText="Tambah Kategori";
+    document.getElementById("modalDesc").innerText="Tambahkan kategori baru.";
 }
 
-function openEdit(i){
-    editIndex=i;
-    modalTitle.innerText="Edit Kategori";
-    modalDesc.innerText="Edit kategori yang Anda buat.";
-    namaKategori.value=filteredData[i].nama;
+// OPEN EDIT
+function openEdit(id, name){
     modalForm.style.display="flex";
+    categoryForm.action = "/admin/categories/" + id;
+    formMethod.value = "PUT";
+    namaKategori.value = name;
+    document.getElementById("modalTitle").innerText="Edit Kategori";
+    document.getElementById("modalDesc").innerText="Perbarui kategori.";
 }
 
-//SAVE
-function submitForm(){
-    if(!namaKategori.value) return alert("Nama kategori wajib diisi!");
-    if(editIndex===null){
-        dataKategori.push({
-            nama:namaKategori.value,
-            tanggal:new Date().toLocaleDateString("id-ID")
-        });
-    }else{
-        let realIndex = dataKategori.indexOf(filteredData[editIndex]);
-        dataKategori[realIndex].nama = namaKategori.value;
-    }
-    closeModal();
-    applySearch();
+// OPEN DELETE
+function openDelete(id){
+    selectedId = id;
+    modalDelete.style.display="flex";
 }
 
-//DELETE
-function openDelete(i){
-    deleteIndex = i;
-    modalDelete.style.display = "flex";
-}
-
+// DELETE
 function hapusKategori(){
-    let realIndex = dataKategori.indexOf(filteredData[deleteIndex]);
-    dataKategori.splice(realIndex, 1);
-    closeDelete();
-    applySearch();
+    deleteForm.action = "/admin/categories/" + selectedId;
+    deleteForm.submit();
 }
 
-//CLOSE MODAL
-function closeModal(){modalForm.style.display="none"}
-function closeDelete(){modalDelete.style.display="none"}
-
-/* ===== SHOW TABLE ===== */
-function showPage(page){
-    let totalPages=Math.ceil(filteredData.length/rowsPerPage);
-    if(page<1) page=1;
-    if(page>totalPages) page=totalPages;
-
-    currentPage=page;
-    kategoriBody.innerHTML="";
-
-    let start=(page-1)*rowsPerPage;
-    let end=start+rowsPerPage;
-    let slice=filteredData.slice(start,end);
-
-    slice.forEach((item,i)=>{
-        kategoriBody.innerHTML+=`
-        <tr>
-            <td>${start+i+1}</td>
-            <td>${item.nama}</td>
-            <td>${item.tanggal}</td>
-            <td>
-                <div class="aksi">
-
-                    <!-- EDIT -->
-                    <div class="icon-btn icon-edit" onclick="openEdit(${start+i})">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
-                            <path d="M20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                    </div>
-
-                    <!-- DELETE -->
-                    <div class="icon-btn icon-delete" onclick="openDelete(${start+i})">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/>
-                            <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                    </div>
-
-                </div>
-            </td>
-        </tr>`;
-    });
-
-    renderPagination();
+// CLOSE
+function closeModal(){
+    modalForm.style.display="none";
 }
-
-// SEARCH
-function applySearch(){
-    let keyword = searchInput.value.toLowerCase();
-    filteredData = dataKategori.filter(item =>
-        item.nama.toLowerCase().includes(keyword) ||
-        item.tanggal.toLowerCase().includes(keyword)
-    );
-    currentPage = 1;
-    showPage(1);
+function closeDelete(){
+    modalDelete.style.display="none";
 }
-searchInput.addEventListener("keyup", applySearch);
-
-// PAGINATION (SLIDING 3 BUTTON)
-function renderPagination(){
-    pageBox.innerHTML = "";
-    let totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    if(totalPages === 0){
-        infoData.innerText = "Tidak ada data";
-        return;
-    }
-
-    pageBox.innerHTML += `<span onclick="showPage(${currentPage-1})">‹</span>`;
-
-    let start = currentPage - 1;
-    let end = currentPage + 1;
-    if(start < 1){ start=1; end=Math.min(3,totalPages); }
-    if(end > totalPages){ end=totalPages; start=Math.max(totalPages-2,1); }
-
-    for(let i=start;i<=end;i++){
-        let s=document.createElement("span");
-        s.innerText=i;
-        if(i===currentPage) s.classList.add("active");
-        s.onclick=()=>showPage(i);
-        pageBox.appendChild(s);
-    }
-
-    if(end < totalPages) pageBox.innerHTML += `<span class="dots">...</span>`;
-    pageBox.innerHTML += `<span onclick="showPage(${currentPage+1})">›</span>`;
-
-    infoData.innerText = `Menampilkan ${(currentPage-1)*rowsPerPage+1}–${Math.min(currentPage*rowsPerPage,filteredData.length)} dari ${filteredData.length} data`;
-}
-
-// LOAD
-document.addEventListener("DOMContentLoaded", ()=> showPage(1));
 </script>
-
-
 @endsection

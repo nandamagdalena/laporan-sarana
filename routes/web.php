@@ -2,73 +2,72 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\IndexUserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AspirationController;
+use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\DashboardUserController;
 
+Route::get('/', function () {
 
-    // Public Routes
-    // Home
-    Route::get('/', function () {
-        return view('welcome');
-    });
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
 
-    // Register
-    Route::get('/register', [AuthController::class, 'registerForm'])->name('registerform');
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    return match (auth()->user()->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'user'  => redirect()->route('user.dashboard'),
+        default => redirect()->route('login'),
+    };
+});
 
-    // Login
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/register', [AuthController::class, 'registerForm'])->name('register.form');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+});
 
-    Route::middleware(['auth'])->group(function () {
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-        Route::middleware('role:admin')->prefix('admin')->group(function () {
-            Route::get('dashboard', function () {
-                return view('admin.dashboard');
-            })->name('admin.dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-            Route::get('/daftarpengguna', function () {
-                return view('admin.daftarpengguna');
-            })->name('admin.daftarpengguna');
+    // Admin Routes
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        // Route::get('/dashboard', fn () => view('admin.dashboard'))->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
 
-            Route::get('/daftarpengaduan', function () {
-                return view('admin.daftarpengaduan');
-            })->name('admin.daftarpengaduan');
+        Route::get('/daftarpengguna', [IndexUserController::class, 'index'])->name('admin.users');
+        Route::delete('/daftarpengguna/{id}', [IndexUserController::class, 'destroy'])->name('users.delete');
 
-            Route::get('/detailpengaduan', function () {
-                return view('admin.detailpengaduan');
-            })->name('admin.detailpengaduan');
+        // Category Management
+        Route::get('/categories', [CategoryController::class, 'index'])->name('category.index');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('category.store');
+        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
-            // Route::get('/detailpengaduan/{id}', function ($id) {
-            //     return view('admin.detailpengaduan', compact('id'));
-            // })->name('admin.detailpengaduan');
+        // Aspiration Management
+        Route::get('/aspirations', [AspirationController::class, 'index'])->name('aspiration.index');
+        Route::get('/aspirations/{aspiration}', [AspirationController::class, 'show'])->name('aspiration.show');
+        Route::put('/aspirations/{aspiration}', [AspirationController::class, 'update'])->name('aspiration.update');
+        Route::get('/aspirations/{id}/export', [AspirationController::class, 'export'])->name('aspirations.export');
 
-            Route::get('/kategori', function () {
-                return view('admin.kategori');
-            })->name('admin.kategori');
-        });
-
-        Route::middleware('role:user')->prefix('user')->group(function () {
-            Route::get('dashboard', function () {
-                return view('user.dashboard');
-            })->name('user.dashboard');
-
-            Route::get('/form_pengaduan', function () {
-                return view('user.form_pengaduan');
-            })->name('user.form_pengaduan');
-
-             Route::get('/riwayatpengaduan', function () {
-                return view('user.riwayatpengaduan');
-            })->name('user.riwayatpengaduan');
-
-            Route::get('/profil', function () {
-                return view('user.profil');
-            })->name('user.profil');
-
-            Route::get('/detailpengaduan', function () {
-                return view('user.detailpengaduan');
-            })->name('user.detailpengaduan');
-
-        });
     });
+
+    // User Routes
+    Route::middleware('role:user')->prefix('user')->group(function () {
+        // Route::get('/dashboard', fn () => view('user.dashboard'))->name('user.dashboard');
+        Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('user.dashboard');
+
+        Route::get('/pengaduan', [AspirationController::class, 'create'])->name('pengaduan.create');
+        Route::post('/pengaduan', [AspirationController::class, 'store'])->name('pengaduan.store');
+        Route::get('/pengaduan-saya', [AspirationController::class, 'myAspiration'])->name('pengaduan.mine');
+        Route::get('/pengaduan/{aspiration}', [AspirationController::class, 'showUser'])->name('pengaduan.show');
+        Route::delete('/pengaduan/{aspiration}', [AspirationController::class, 'destroy'])->name('pengaduan.destroy');
+    });
+});

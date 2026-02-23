@@ -178,6 +178,164 @@ body{
     border-radius:50%;
     object-fit:cover;
 }
+
+.btn-edit {
+    margin: 20px;
+    padding: 12px 20px;
+    background: #dbeafe;
+    color: #1e40af;
+    text-decoration: none;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.btn-logout {
+    margin: 20px;
+    padding: 12px 20px;
+    background: #fee2e2;
+    color: #dc2626;
+    text-decoration: none;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-btn-top{
+    background:#fee2e2;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    color:#dc2626;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.user {
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.user-info b{
+    font-size:18px;
+}
+
+.user-info small{
+    font-size:14px;
+    color:#6b7280;
+}
+
+.logout-form{
+    margin:0;
+}
+
+.logout-link{
+    background:transparent;
+    border:none;
+    color:#dc2626;
+    font-weight:600;
+    cursor:pointer;
+    font-size:14px;
+    padding:6px 10px;
+    border-radius:8px;
+    transition:0.2s;
+}
+
+.logout-link:hover{
+    background:#fee2e2;
+}
+
+/* ================= PROFILE DROPDOWN ================= */
+
+.profile-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    z-index:98; /* lebih kecil dari dropdown */
+}
+
+.profile-dropdown{
+    position:fixed;
+    top:70px;
+    right:30px;
+    width:340px;
+    background:#fff;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.15);
+    display:none;
+    z-index:9999; /* lebih tinggi dari overlay */
+    opacity:0;
+    transform:translateY(-10px);
+    transition:0.25s ease;
+}
+
+.profile-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.profile-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:#f3f4f6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.profile-icon svg{
+    width:28px;
+    height:28px;
+    color:#6b7280;
+}
+
+.profile-header b{
+    font-size:18px;
+}
+
+.profile-header small{
+    color:#6b7280;
+}
+
+.profile-dropdown hr{
+    margin:20px 0;
+    border:none;
+    border-top:1px solid #e5e7eb;
+}
+
+.dropdown-btn{
+    width:100%;
+    display:block;
+    padding:14px;
+    border-radius:14px;
+    font-weight:600;
+    text-align:center;
+    margin-bottom:15px;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+}
+
+.edit-btn{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.logout-btn{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.dropdown-btn:hover{
+    opacity:0.9;
+}
+
 </style>
 </head>
 
@@ -193,7 +351,7 @@ body{
 
         <!-- DASHBOARD -->
         <h4>Dashboard</h4>
-        <a href="{{ route('admin.dashboard') }}" 
+        <a href="{{ route('admin.dashboard') }}"
            class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
 
             <!-- ICON DASHBOARD GRID -->
@@ -207,7 +365,7 @@ body{
 
         <!-- ===== PENGGUNA ===== -->
         <h4>Pengguna</h4>
-        <a href="{{ route('admin.daftarpengguna') }}" 
+        <a href="{{ route('admin.users') }}"
         class="menu-user {{ request()->routeIs('admin.daftarpengguna') ? 'active' : '' }}">
 
             <!-- ICON USERS BULAT (SEPERTI GAMBAR) -->
@@ -235,7 +393,7 @@ body{
         <!-- ===== PENGADUAN ===== -->
         <h4>Pengaduan</h4>
 
-        <a href="{{ route('admin.daftarpengaduan') }}" 
+        <a href="{{ route('aspiration.index') }}"
         class="menu-pengaduan {{ request()->routeIs('admin.daftarpengaduan') ? 'active' : '' }}">
 
             <!-- ICON DOKUMEN SEPERTI GAMBAR -->
@@ -254,7 +412,7 @@ body{
 
         <!-- KATEGORI (FOLDER) -->
         <h4>Kategori</h4>
-        <a href="{{ route('admin.kategori') }}" 
+        <a href="{{ route('category.index') }}"
            class="{{ request()->routeIs('admin.kategori') ? 'active' : '' }}">
 
             <!-- ICON FOLDER -->
@@ -280,30 +438,87 @@ body{
             </svg>
         </button>
 
-        <div class="user">
-            <div>
-                <b>Admin Sarpras</b><br>
-                <small>adminsarpras@gmail.com</small>
+        <div class="user" id="userToggle">
+            <div class="user-info">
+                <b>{{ Auth::user()->name }}</b><br>
+                <small>{{ Auth::user()->email }}</small>
             </div>
             <img src="{{ asset('images/user.jpeg') }}">
         </div>
     </div>
 
-    @yield('content')
+    <!-- OVERLAY -->
+    <div class="profile-overlay" id="profileOverlay"></div>
 
-</div>
-</div>
+    <!-- DROPDOWN -->
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-header">
+            <div class="profile-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+                </svg>
+            </div>
+
+            <div>
+                <b>{{ Auth::user()->name }}</b><br>
+                <small>{{ Auth::user()->email }}</small>
+            </div>
+        </div>
+
+        <hr>
+
+        <a href="#" class="dropdown-btn edit-btn">Edit Profil</a>
+
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="dropdown-btn logout-btn">
+                Logout ➜
+            </button>
+        </form>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div style="padding:20px;">
+        @yield('content')
+    </div>
+
+</div> <!-- tutup content -->
+</div> <!-- tutup wrapper -->
 
 <script>
-const toggleBtn = document.getElementById('toggleBtn');
-const sidebar = document.getElementById('sidebar');
 
-toggleBtn.onclick = () => {
-    sidebar.classList.toggle('hide');
-    toggleBtn.innerHTML = sidebar.classList.contains('hide')
-        ? `<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>`
-        : `<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>`;
-};
+const userToggle = document.getElementById('userToggle');
+const profileDropdown = document.getElementById('profileDropdown');
+const profileOverlay = document.getElementById('profileOverlay');
+
+userToggle.addEventListener("click", function () {
+
+    if(profileDropdown.style.display === "block"){
+        closeProfile();
+    } else {
+        profileDropdown.style.display = "block";
+        profileOverlay.style.display = "block";
+
+        setTimeout(() => {
+            profileDropdown.style.opacity = "1";
+            profileDropdown.style.transform = "translateY(0)";
+        }, 10);
+    }
+});
+
+function closeProfile(){
+    profileDropdown.style.opacity = "0";
+    profileDropdown.style.transform = "translateY(-10px)";
+    profileOverlay.style.display = "none";
+
+    setTimeout(() => {
+        profileDropdown.style.display = "none";
+    }, 200);
+}
+
+profileOverlay.addEventListener("click", closeProfile);
+
 </script>
 
 </body>

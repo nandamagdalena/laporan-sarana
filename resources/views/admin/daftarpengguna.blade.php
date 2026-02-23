@@ -299,37 +299,33 @@ tbody tr:hover {
 </div>
 
 <div class="card">
-    
-    <div class="search-bar">
+
+    {{-- SEARCH & SORT FORM --}}
+    <form method="GET" action="{{ route('admin.users') }}" class="search-bar">
 
         <!-- SEARCH -->
         <div class="search-box">
-            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="searchInput" placeholder="Telusuri nama pengguna...">
+            <input type="text"
+                   name="search"
+                   value="{{ request('search') }}"
+                   placeholder="Telusuri nama pengguna...">
         </div>
 
         <!-- SORT -->
         <div class="sort-wrapper">
             <span>Sort by:</span>
 
-            <div class="sort-box">
-                <button class="sort-btn" id="sortBtn">
-                    <span id="sortText">A - Z</span> ▼
-                </button>
-
-                <div class="sort-dropdown" id="sortDropdown">
-                    <div onclick="sortTable('az')">A - Z</div>
-                    <div onclick="sortTable('za')">Z - A</div>
-                </div>
-            </div>
+            <select name="sort" onchange="this.form.submit()" class="sort-btn">
+                <option value="az" {{ $sort == 'az' ? 'selected' : '' }}>A - Z</option>
+                <option value="za" {{ $sort == 'za' ? 'selected' : '' }}>Z - A</option>
+            </select>
         </div>
 
-    </div>
+        <button type="submit" style="display:none;"></button>
+    </form>
 
-    <table id="userTable">
+    {{-- TABLE --}}
+    <table>
         <thead>
             <tr>
                 <th>No</th>
@@ -337,47 +333,48 @@ tbody tr:hover {
                 <th>NIS</th>
                 <th>Email</th>
                 <th>No. Telpon</th>
-                <th>Aksi</th>
+                <th class="th-aksi">Aksi</th>
             </tr>
         </thead>
         <tbody>
-        <!-- DATA -->
-        <tr><td>1</td><td>Aldrich Aditya Pramudya Putra</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>2</td><td>Berliana Cahya Rizky Wardani</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>3</td><td>Cendikiawan Rama Fahrezi Nugroho</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>4</td><td>Dianita Salsabila Rahmawati Putri</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>5</td><td>Erlangga Muhammad Rizqullah Saputra</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>6</td><td>Aldrich Aditya Pramudya Putra</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>7</td><td>Berliana Cahya Rizky Wardani</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>8</td><td>Cendikiawan Rama Fahrezi Nugroho</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>9</td><td>Dianita Salsabila Rahmawati Putri</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>10</td><td>Erlangga Muhammad Rizqullah Saputra</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>11</td><td>Prastika Devi Anggraini</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>12</td><td>Berliana Cahya Rizky Wardani</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>13</td><td>Cendikiawan Rama Fahrezi Nugroho</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>14</td><td>Aldrich Aditya Pramudya Putra</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>15</td><td>Berliana Cahya Rizky Wardani</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>16</td><td>Cendikiawan Rama Fahrezi Nugroho</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>17</td><td>Dianita Salsabila Rahmawati Putri</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>18</td><td>Erlangga Muhammad Rizqullah Saputra</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>19</td><td>Aldrich Aditya Pramudya Putra</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>20</td><td>Revi Amelia</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>21</td><td>Prastika Devi Anggraini</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>22</td><td>Argyatalla Rama Widodo</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>23</td><td>Erlangga Muhammad Rizqullah Saputra</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>24</td><td>Prastika Devi Anggraini</td><td>1023/144.098</td><td>jhondoe1889@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-        <tr><td>25</td><td>Berliana Cahya Rizky Wardani</td><td>1023/444.098</td><td>jhondoe188@gmail.com</td><td>0812345678910</td><td><button class="delete-btn">🗑</button></td></tr>
-    </tbody>
-    </tbody>
-
+        @forelse($users as $index => $user)
+            <tr>
+                <td>{{ $users->firstItem() + $index }}</td>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->nis ?? '-' }}</td>
+                <td>{{ $user->email }}</td>
+                <td>{{ $user->phone ?? '-' }}</td>
+                <td>
+                    <form action="{{ route('users.delete', $user->id) }}"
+                          method="POST"
+                          onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="delete-btn">🗑</button>
+                    </form>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="6" style="text-align:center;">Tidak ada data</td>
+            </tr>
+        @endforelse
+        </tbody>
     </table>
 
+    {{-- PAGINATION --}}
     <div class="pagination">
-        <div>Menampilkan 1–10 dari 21 data</div>
-        <div class="page"></div>
+        <div>
+            Menampilkan {{ $users->firstItem() ?? 0 }}
+            – {{ $users->lastItem() ?? 0 }}
+            dari {{ $users->total() }} data
+        </div>
+
+        <div>
+            {{ $users->links() }}
+        </div>
     </div>
 
-</div>
 </div>
 
 <!-- POPUP -->
@@ -399,159 +396,26 @@ tbody tr:hover {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    /* ================= ELEMENT ================= */
-    const tbody = document.querySelector("#userTable tbody");
-    const searchInput = document.getElementById("searchInput");
-    const sortBtn = document.getElementById("sortBtn");
-    const sortDropdown = document.getElementById("sortDropdown");
-    const sortText = document.getElementById("sortText");
-
-    /* FUNCTION GET ROWS TERBARU */
-    function getRows() {
-        return Array.from(tbody.querySelectorAll("tr"));
-    }
-
-    /* ================= PAGINATION ================= */
-    const rowsPerPage = 10; // ubah ke 2 untuk test
-    let currentPage = 1;
-
-    function getTotalPages() {
-        return Math.ceil(getRows().length / rowsPerPage);
-    }
-
-    const pageContainer = document.querySelector(".page");
-
-    function renderPagination() {
-        pageContainer.innerHTML = "";
-
-        const totalPages = getTotalPages();
-
-        // PREV
-        const prev = document.createElement("span");
-        prev.innerText = "‹";
-        prev.onclick = () => currentPage > 1 && showPage(currentPage - 1);
-        pageContainer.appendChild(prev);
-
-        // SLIDING RANGE
-        let start = currentPage - 1;
-        if (start < 1) start = 1;
-
-        let end = start + 2;
-        if (end > totalPages) {
-            end = totalPages;
-            start = Math.max(end - 2, 1);
-        }
-
-        // PAGE BUTTONS
-        for (let i = start; i <= end; i++) {
-            const btn = document.createElement("span");
-            btn.innerText = i;
-            if (i === currentPage) btn.classList.add("active");
-            btn.onclick = () => showPage(i);
-            pageContainer.appendChild(btn);
-        }
-
-        // DOTS
-        if (end < totalPages) {
-            const dots = document.createElement("span");
-            dots.innerText = "...";
-            dots.classList.add("dots");
-            pageContainer.appendChild(dots);
-        }
-
-        // NEXT
-        const next = document.createElement("span");
-        next.innerText = "›";
-        next.onclick = () => currentPage < totalPages && showPage(currentPage + 1);
-        pageContainer.appendChild(next);
-    }
-
-    function showPage(page) {
-        currentPage = page;
-        let rows = getRows();
-
-        rows.forEach((row, index) => {
-            row.style.display =
-                index >= (page - 1) * rowsPerPage &&
-                index < page * rowsPerPage
-                    ? ""
-                    : "none";
-        });
-
-        renderPagination();
-    }
-
-    window.showPage = showPage;
-    showPage(1);
-
-    /* ================= DELETE POPUP ================= */
-    let rowToDelete = null;
     const popup = document.getElementById("popupDelete");
+    let formToSubmit = null;
 
     document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            rowToDelete = this.closest("tr");
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            formToSubmit = this.closest("form");
             popup.style.display = "flex";
         });
     });
 
-    document.getElementById("btnCancel").onclick = () => popup.style.display = "none";
+    document.getElementById("btnCancel").onclick = () => {
+        popup.style.display = "none";
+    };
 
     document.getElementById("btnConfirmDelete").onclick = () => {
-        if (rowToDelete) rowToDelete.remove();
-        popup.style.display = "none";
-        showPage(1);
+        if (formToSubmit) formToSubmit.submit();
     };
-
-    /* ================= SEARCH ================= */
-    searchInput.addEventListener("keyup", function () {
-        let keyword = this.value.toLowerCase();
-        getRows().forEach(row => {
-            let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(keyword) ? "" : "none";
-        });
-    });
-
-
-
-    /* ================= SORT DROPDOWN ================= */
-    sortBtn.onclick = (e) => {
-        e.stopPropagation();
-        sortDropdown.style.display =
-            sortDropdown.style.display === "block" ? "none" : "block";
-    };
-
-    document.addEventListener("click", (e) => {
-        if (!sortBtn.contains(e.target) && !sortDropdown.contains(e.target)) {
-            sortDropdown.style.display = "none";
-        }
-    });
-
-    /* ================= SORT TABLE ================= */
-   window.sortTable = function (type) {
-    let rows = getRows();
-
-    rows.sort((a, b) => {
-        let A = a.cells[1].innerText.trim().toLowerCase();
-        let B = b.cells[1].innerText.trim().toLowerCase();
-
-        if (type === "az") return A.localeCompare(B, 'id');
-        else return B.localeCompare(A, 'id');
-    });
-
-    // kosongkan tbody lalu append ulang
-    tbody.innerHTML = "";
-    rows.forEach(row => tbody.appendChild(row));
-
-    sortText.innerText = type === "az" ? "A - Z" : "Z - A";
-    sortDropdown.style.display = "none";
-
-    showPage(1);
-};
-
 
 });
 </script>
-
 
 @endsection

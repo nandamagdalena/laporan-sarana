@@ -347,17 +347,18 @@
         </a>
 
         <h4>Pengaduan</h4>
-        <a href="{{ route('user.form_pengaduan') }}" class="{{ request()->routeIs('user.form_pengaduan') ? 'active' : '' }}">
+        <a href="{{ route('pengaduan.create') }}" class="{{ request()->routeIs('user.form_pengaduan') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24">
-                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
-                <line x1="8" y1="8" x2="16" y2="8"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
+                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
             </svg>
             Form Pengaduan
         </a>
 
         <br>
-        <a href="{{ route('user.riwayatpengaduan') }}" class="{{ request()->routeIs('user.riwayatpengaduan') ? 'active' : '' }}">
+        <a href="{{ route('pengaduan.mine') }}" class="{{ request()->routeIs('user.riwayatpengaduan') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="9"></circle>
                 <path d="M12 7v5l3 3"></path>
@@ -423,9 +424,17 @@
     </div>
 
     <!-- BUTTON -->
-    <a href="{{ route('user.profil') }}" class="btn-edit">Edit Profil</a>
+    <a href="#" class="btn-edit">Edit Profil</a>
 
-    <a href="{{ route('login') }}" class="btn-logout">Logout ➜</a>
+    <a href="#"
+    class="btn-logout"
+    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    Logout ➜
+    </a>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 
 </div>
 

@@ -192,8 +192,6 @@
         margin: 0 auto;
     }
 
-
-
     /* BUTTON */
     .btn-ok {
         background: #22c55e;
@@ -210,9 +208,11 @@
         background: #16a34a;
     }
 
-    
+    .upload-box img{
+        max-width:100%;
+        object-fit:cover;
+    }
 </style>
-
 
 <div class="main">
 
@@ -222,10 +222,16 @@
         🏠 Beranda &gt; <span class="active">Form Pengaduan</span>
     </div>
 
-    <form action="{{ route('user.form_pengaduan') }}"
+    {{-- SUCCESS MESSAGE --}}
+    @if(session('success'))
+        <div style="background:#dcfce7;color:#166534;padding:10px;border-radius:6px;margin-bottom:15px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <form action="{{ route('pengaduan.store') }}"
           method="POST"
-          enctype="multipart/form-data"
-          onsubmit="return false;">
+          enctype="multipart/form-data">
         @csrf
 
         <div class="card">
@@ -240,41 +246,47 @@
                 <div>
                     <div class="form-group">
                         <label>Nama</label>
-                        <input type="text" name="nama" class="form-control">
+                        <label for="">*Pastikan nama yang di inputkan sesuai dengan nama yang di inputkan saat registrasi</label>
+                        <input type="text" name="name" class="form-control"
+                               value="{{ old('name') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Tanggal</label>
-                        <input type="date" name="tanggal" class="form-control">
+                        <input type="date" name="date" class="form-control"
+                               value="{{ old('date') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Kategori</label>
-                        <select name="kategori_id" class="form-control">
-                            <option>Pilih Kategori</option>
-                            <option>Kelas</option>
-                            <option>Toilet</option>
-                            <option>Ruang Guru</option>
-                            <option>Uks</option>
+                        <select name="category_id" class="form-control">
+                            <option value="">Pilih Kategori</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Lokasi</label>
-                        <input type="text" name="lokasi" class="form-control">
+                        <input type="text" name="location" class="form-control"
+                               value="{{ old('location') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Keterangan</label>
-                        <textarea name="keterangan" rows="5" class="form-control"></textarea>
+                        <textarea name="description" rows="5" class="form-control">{{ old('description') }}</textarea>
                     </div>
                 </div>
 
                 <div>
                     <label>Bukti</label>
-                    <label class="upload-box">
-                        📷 Unggah Gambar
-                        <input type="file" name="bukti">
+                    <label class="upload-box" id="uploadBox">
+                        <span id="uploadText">📷 Unggah Gambar</span>
+                        <img id="previewImage" style="display:none; max-height:180px; border-radius:8px;" />
+                        <input type="file" name="image" id="imageInput" accept="image/*">
                     </label>
                 </div>
 
@@ -283,31 +295,57 @@
 
         <div class="card-footer">
             <button type="reset" class="btn btn-secondary">Batal</button>
-            <button type="button" class="btn btn-primary" onclick="showSuccessPopup()">Kirim</button>
+            <button type="submit" class="btn btn-primary">Kirim</button>
         </div>
     </form>
 </div>
 
-
 <div class="popup-overlay" id="popupSuccess">
-    <div class="popup-box">
-        <img src="{{ asset('images/senyum.png') }}" class="popup-image">
-        <h4>Terima kasih atas laporan Anda!</h4>
-        <p>Pengaduan sarana sekolah telah berhasil dikirim dan sedang menunggu peninjauan.</p>
-        <img src="{{ asset('images/popup.png') }}" class="popup">
-        <button class="btn-ok" id="btnOk">OK</button>
+    <div class="popup-box"> <img src="{{ asset('images/senyum.png') }}" class="popup-image">
+        <h4>Terima kasih atas laporan Anda!</h4> <p>Pengaduan sarana sekolah telah berhasil dikirim dan sedang menunggu peninjauan.</p>
+        <img src="{{ asset('images/popup.png') }}" class="popup"> <button class="btn-ok" id="btnOk">OK</button>
     </div>
 </div>
 
-
 <script>
-function showSuccessPopup() {
-    document.getElementById('popupSuccess').style.display = 'flex';
-}
+document.addEventListener("DOMContentLoaded", function () {
 
-document.getElementById('btnOk').addEventListener('click', function () {
-    window.location.href = "{{ route('user.form_pengaduan') }}";
+    // AUTO SHOW POPUP JIKA SUCCESS
+    @if(session('success'))
+        document.getElementById('popupSuccess').style.display = 'flex';
+    @endif
+
+    // BUTTON OK (TUTUP POPUP)
+    const btnOk = document.getElementById('btnOk');
+    if (btnOk) {
+        btnOk.addEventListener('click', function () {
+            window.location.href = "{{ route('pengaduan.mine') }}";
+        });
+    }
+
+    // IMAGE PREVIEW
+    const imageInput = document.getElementById('imageInput');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+
+            const file = e.target.files[0];
+            const preview = document.getElementById('previewImage');
+            const text = document.getElementById('uploadText');
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    preview.src = event.target.result;
+                    preview.style.display = "block";
+                    text.style.display = "none";
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
 });
 </script>
-
 @endsection

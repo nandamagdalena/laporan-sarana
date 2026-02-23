@@ -255,15 +255,68 @@
         box-shadow:0 2px 8px rgba(0,0,0,.05);
     }
 
+    .content-wrapper{
+        display:grid;
+        grid-template-columns: 1fr 300px;
+        gap:40px;
+    }
+
+    .detail-left{
+        display:flex;
+        flex-direction:column;
+        gap: 0; /* HAPUS gap besar kalau ada */
+    }
+
+    .detail-row{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 16px; /* sebelumnya 24px → terlalu jauh */
+    }
+
+    .form-label{
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 4px; /* sebelumnya 6px */
+    }
+
+    .form-value{
+        font-size: 15px;
+        color: #6b7280;
+    }
+
+    .detail-right{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .bukti-img{
+        width:100%;
+        border-radius:10px;
+        border:1px solid #e5e7eb;
+        object-fit:contain;
+    }
+
+    .response-box{
+        margin-top:6px;
+        padding:16px;
+        border-radius:8px;
+        background:#f3f4f6;
+        border:1px solid #e5e7eb;
+        font-size:14px;
+        line-height:1.6;
+    }
+
 </style>
 
-<div class="main">
+<div class="page-wrapper">
+    <div class="main">
 
     <h3>Detail Pengaduan</h3>
 
     <div class="breadcrumb">
         🏠 <a href="{{ route('user.dashboard') }}">Beranda</a> &gt;
-        <a href="{{ route('user.riwayatpengaduan') }}">Riwayat Pengaduan</a> &gt;
+        <a href="{{ route('pengaduan.mine') }}">Riwayat Pengaduan</a> &gt;
         <span class="breadcrumb-active">Detail Pengaduan</span>
     </div>
 
@@ -276,17 +329,25 @@
                 <small>Tanggapi laporan pengaduan.</small>
             </div>
 
-            <button class="btn-hapus" type="button" onclick="openDelete()">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                    <path d="M10 11v6"/>
-                    <path d="M14 11v6"/>
-                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                </svg>
-                Hapus Pengaduan
-            </button>
+            <form action="{{ route('pengaduan.destroy', $aspiration->id) }}"
+                method="POST"
+                id="deleteForm">
+
+                @csrf
+                @method('DELETE')
+
+                <button class="btn-hapus" type="button" onclick="openDelete()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/>
+                        <path d="M14 11v6"/>
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
+                    Hapus Pengaduan
+                </button>
+            </form>
         </div>
 
         <!-- POPUP DELETE -->
@@ -314,53 +375,98 @@
 
                 <div class="delete-btn-area">
                     <button class="btn-cancel" onclick="closeDelete()">Batalkan</button>
-                    <button class="btn-hapus" onclick="confirmDelete()">Hapus</button>
+                    <button class="btn-delete" onclick="submitDelete()">
+                        Hapus
+                    </button>
                 </div>
 
             </div>
         </div>
 
         <!-- ISI -->
-        <div style="display:grid;grid-template-columns:1fr 280px;gap:30px;">
+        <div class="content-wrapper">
 
-            <!-- KIRI -->
-            <div>
-                <div class="form-label">Nama</div>
-                <div class="form-value">Aldrich Aditya Pramudya Putra</div>
+    <!-- KIRI -->
+    <div class="detail-left">
 
-                <div class="form-label">Tanggal</div>
-                <div class="form-value">12-10-2026</div>
-
-                <div class="form-label">Kategori</div>
-                <div class="form-value">Kelas</div>
-
-                <div class="form-label">Lokasi</div>
-                <div class="form-value">Kelas XII-RPL 2</div>
-
-                <div class="form-label">Keterangan</div>
-                <div class="form-value">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </div>
-
-                <div class="form-label">Status</div>
-                <div class="status-wrapper">
-                    <span class="status menunggu">Menunggu</span>
-                </div>
-
-                <div class="tanggapan-full">
-                    <div class="form-label">Tanggapan</div>
-                    <textarea class="form-textarea"></textarea>
-                </div>
-            </div>
-
-            <!-- KANAN (BUKTI) -->
-            <div>
-                <div class="form-label">Bukti</div>
-                <img src="{{ asset('images/bukti.png') }}"
-                     style="width:100%;border-radius:10px;border:1px solid #e5e7eb;">
-            </div>
-
+        <div class="detail-row">
+            <div class="form-label">Nama</div>
+            <div class="form-value">{{ $aspiration->name }}</div>
         </div>
+
+        <div class="detail-row">
+            <div class="form-label">Username</div>
+            <div class="form-value">{{ $aspiration->user->name }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Tanggal</div>
+            <div class="form-value">
+                {{ \Carbon\Carbon::parse($aspiration->date)->format('d-m-Y') }}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Kategori</div>
+            <div class="form-value">
+                {{ $aspiration->category->name ?? '-' }}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Lokasi</div>
+            <div class="form-value">{{ $aspiration->location }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Keterangan</div>
+            <div class="form-value">
+                {{ $aspiration->description }}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Status</div>
+            <div class="status-wrapper">
+                @if($aspiration->status == 'menunggu')
+                    <span class="status menunggu">Menunggu</span>
+                @elseif($aspiration->status == 'diproses')
+                    <span class="status proses">Diproses</span>
+                @elseif($aspiration->status == 'selesai')
+                    <span class="status selesai">Selesai</span>
+                @else
+                    <span class="status menunggu">Ditolak</span>
+                @endif
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="form-label">Tanggapan</div>
+            <div class="form-value">
+                @if($aspiration->response)
+                    <div class="response-box">
+                        {{ $aspiration->response }}
+                    </div>
+                @else
+                    <span style="color:#9ca3af;">Belum ada tanggapan</span>
+                @endif
+            </div>
+        </div>
+
+    </div>
+
+    <!-- KANAN -->
+    <div class="detail-right">
+        <div class="form-label">Bukti</div>
+
+        @if($aspiration->image)
+            <img src="{{ asset('storage/' . $aspiration->image) }}"
+                 class="bukti-img">
+        @else
+            <div class="form-value">Tidak ada bukti</div>
+        @endif
+    </div>
+    </div>
 
     </div>
 
@@ -368,12 +474,10 @@
 
 <!-- CARD TOMBOL KEMBALI -->
 <div class="card footer-card">
-    <a href="{{ route('user.riwayatpengaduan') }}" class="btn-secondary">
+    <a href="{{ route('pengaduan.mine') }}" class="btn-secondary">
         Kembali
     </a>
 </div>
-
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -413,17 +517,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /* ===== MODAL DELETE ===== */
-function openDelete() {
-    document.getElementById('deleteModal').style.display = 'flex';
+function openDelete(){
+    document.getElementById('deleteModal').style.display='flex';
 }
 
-function closeDelete() {
-    document.getElementById('deleteModal').style.display = 'none';
+function closeDelete(){
+    document.getElementById('deleteModal').style.display='none';
 }
 
-function confirmDelete() {
-    alert('Fitur hapus belum diaktifkan');
-    closeDelete();
+function submitDelete(){
+    document.getElementById('deleteForm').submit();
 }
 </script>
 

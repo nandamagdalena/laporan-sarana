@@ -13,48 +13,6 @@
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <script>
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('password_confirmation');
-    const errorText = document.getElementById('password-error');
-
-    function checkPassword() {
-        if (confirmPassword.value === '') {
-            errorText.classList.add('d-none');
-            confirmPassword.classList.remove('is-invalid');
-            return;
-        }
-
-        if (password.value !== confirmPassword.value) {
-            errorText.classList.remove('d-none');
-            confirmPassword.classList.add('is-invalid');
-        } else {
-            errorText.classList.add('d-none');
-            confirmPassword.classList.remove('is-invalid');
-        }
-    }
-
-    password.addEventListener('keyup', checkPassword);
-    confirmPassword.addEventListener('keyup', checkPassword);
-
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-        icon.addEventListener('click', function () {
-            const input = document.getElementById(this.dataset.target);
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.classList.remove('bi-eye');
-                this.classList.add('bi-eye-slash');
-            } else {
-                input.type = 'password';
-                this.classList.remove('bi-eye-slash');
-                this.classList.add('bi-eye');
-            }
-        });
-    });
-</script>
-
-
     <style>
     body {
     min-height: 100vh;
@@ -117,7 +75,7 @@
             letter-spacing: 0.3px;
         }
 
-        
+
        /* TEXT LAPORKU */
         .laporku-text {
             transform: translate(140px, -90px);
@@ -243,7 +201,7 @@
 <div class="container-fluid auth-wrapper">
     <div class="row w-100 align-items-center">
 
-        
+
        {{-- LOGO ATAS --}}
         <img src="{{ asset('images/logo.png') }}" class="logo-atas">
 
@@ -268,68 +226,96 @@
         <div class="col-lg-7 offset-lg-1">
             <div class="form-card">
 
-           <form id="register" action="{{ route('registerform') }}" method="get">
+           <form id="registerForm" action="{{ route('register') }}" method="POST">
+                @csrf
 
                     {{-- Nama --}}
                     <label class="form-label">Nama</label>
-                    <div class="mb-1 position-relative">
-                        <i class="bi bi-person input-icon"></i>
-                        <input type="text" class="form-control" placeholder="Masukkan nama Anda">
-                    </div>
+                    <input type="text"
+                        name="name"
+                        value="{{ old('name') }}"
+                        class="form-control @error('name') is-invalid @enderror"
+                        placeholder="Masukkan nama Anda">
+                    @error('name')
+                    <small class="text-danger">{{ $message }}</small>
+                    @enderror
 
                     {{-- Email --}}
                     <label class="form-label">Email</label>
-                    <div class="mb-1 position-relative">
-                        <i class="bi bi-envelope input-icon"></i>
-                        <input type="email" class="form-control" placeholder="Masukkan email Anda">
-                    </div>
+                    <input type="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        class="form-control @error('email') is-invalid @enderror"
+                        placeholder="Masukkan email Anda">
+                    @error('email')
+                    <small class="text-danger">{{ $message }}</small>
+                    @enderror
 
                     {{-- NIS --}}
                     <label class="form-label">NIS</label>
-                    <div class="mb-1 position-relative">
-                        <i class="bi bi-card-text input-icon"></i>
-                        <input type="text" class="form-control" placeholder="Masukkan NIS Anda">
-                    </div>
-                    <small class="text-danger"></small>
+                    <input type="text"
+                        name="nis"
+                        value="{{ old('nis') }}"
+                        class="form-control @error('nis') is-invalid @enderror"
+                        placeholder="Masukkan NIS Anda">
+                    @error('nis')
+                    <small class="text-danger">{{ $message }}</small>
+                    @enderror
 
                     {{-- Telepon --}}
-                    <label class="form-label">No Tlp</label>
-                    <div class="mb-1 position-relative">
-                        <i class="bi bi-telephone input-icon"></i>
-                        <input type="text" class="form-control" placeholder="Masukkan no telepon Anda">
-                    </div>
+                    <label class="form-label">Telepon</label>
+                    <input type="text"
+                        name="phone_number"
+                        value="{{ old('phone_number') }}"
+                        class="form-control @error('phone_number') is-invalid @enderror"
+                        placeholder="Masukkan no telepon Anda">
+
+                    @error('phone_number')
+                    <small class="text-danger">{{ $message }}</small>
+                    @enderror
 
                     {{-- Password --}}
                     <label class="form-label">Password</label>
-                     <div class="mb-1 position-relative">
+                    <div class="mb-1 position-relative">
                         <i class="bi bi-lock input-icon"></i>
-                        <input type="password" id="password" class="form-control"
-                               placeholder="Masukkan password">
+
+                        <input type="password"
+                            id="password"
+                            name="password"
+                            class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Masukkan password">
+
                         <i class="bi bi-eye-slash toggle-password"
-                           onclick="togglePassword('password', this)"></i>
+                        onclick="togglePassword('password', this)"></i>
+
+                        @error('password')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
 
-<label class="form-label">Konfimasi Pasword</label>
+                    {{-- Konfirmasi --}}
+                    <label class="form-label">Konfirmasi Password</label>
                     <div class="mb-1 position-relative">
                         <i class="bi bi-lock input-icon"></i>
 
                         <input type="password"
                             id="password_confirmation"
-                            class="form-control"
+                            name="password_confirmation"
+                            class="form-control @error('password_confirmation') is-invalid @enderror"
                             placeholder="Konfirmasi password">
-                            <small id="password-error" class="error-text d-none">
-    konfirmasi password anda salah</small>
+
+                        <small id="password-error" class="error-text d-none">
+                            konfirmasi password anda salah
+                        </small>
+
                         <i class="bi bi-eye-slash toggle-password"
                         onclick="togglePassword('password_confirmation', this)"></i>
                     </div>
 
-                    
-
                  <button type="submit" class="btn btn-primary w-100 mt-4">
-    Daftar
-</button>
-<div class="text-center mt-3">
-                        
+                    Daftar
+                </button>
+                <div class="text-center mt-3">
                         </a>
                           <p class="text-center mt-3 small-text">
                         Sudah punya akun?
@@ -345,78 +331,22 @@
 
     </div>
 </div>
-
-<script>
-function togglePassword(id, icon) {
-    const input = document.getElementById(id);
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.replace("bi-eye-slash", "bi-eye");
-    } else {
-        input.type = "password";
-        icon.classList.replace("bi-eye", "bi-eye-slash");
-    }
-}
-</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("password_confirmation");
-    const errorText = document.getElementById("password-error");
 
-    function validateConfirmPassword() {
-        // reset dulu
-        confirmPassword.classList.remove("is-invalid");
-        errorText.classList.add("d-none");
+    window.togglePassword = function(id, icon) {
+        const input = document.getElementById(id);
 
-        // kalau salah satu kosong → DIAM
-        if (!password.value || !confirmPassword.value) return;
-
-        // kalau masih ngetik konfirmasi → DIAM
-        if (confirmPassword.value.length < password.value.length) return;
-
-        // VALIDASI HANYA KONFIRMASI
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.classList.add("is-invalid");
-            errorText.classList.remove("d-none");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("bi-eye-slash", "bi-eye");
+        } else {
+            input.type = "password";
+            icon.classList.replace("bi-eye", "bi-eye-slash");
         }
-    }
+    };
 
-    confirmPassword.addEventListener("input", validateConfirmPassword);
-    password.addEventListener("input", validateConfirmPassword);
 });
 </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("registerForm");
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("password_confirmation");
-    const errorText = document.getElementById("password-error");
-
-    form.addEventListener("submit", function (e) {
-        // reset error
-        confirmPassword.classList.remove("is-invalid");
-        errorText.classList.add("d-none");
-
-        // kalau kosong → stop
-        if (!password.value || !confirmPassword.value) {
-            e.preventDefault();
-            return;
-        }
-
-        // kalau tidak sama → STOP & TETAP DI REGISTER
-        if (password.value !== confirmPassword.value) {
-            e.preventDefault(); // ⛔ BLOK KE LOGIN
-            confirmPassword.classList.add("is-invalid");
-            errorText.classList.remove("d-none");
-            return;
-        }
-    });
-});
-</script>
-
-
-
 </body>
 </html>
