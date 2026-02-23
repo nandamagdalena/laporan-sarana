@@ -386,10 +386,12 @@
                             <td>
                                 @if($item->status == 'menunggu')
                                     <span class="status menunggu">Menunggu</span>
-                                @elseif($item->status == 'proses')
-                                    <span class="status proses">Proses</span>
-                                @else
+                                @elseif($item->status == 'diproses')
+                                    <span class="status proses">Diproses</span>
+                                @elseif($item->status == 'selesai')
                                     <span class="status selesai">Selesai</span>
+                                @else
+                                    <span class="status menunggu">Ditolak</span>
                                 @endif
                             </td>
                             <td style="text-align:center;">

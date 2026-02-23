@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\AdminProfileController;
 
 Route::get('/', function () {
 
@@ -41,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         // Route::get('/dashboard', fn () => view('admin.dashboard'))->name('admin.dashboard');
         Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+        Route::post('/profile/update', [AdminProfileController::class, 'update'])->name('admin.profile.update');
 
         Route::get('/daftarpengguna', [IndexUserController::class, 'index'])->name('admin.users');
         Route::delete('/daftarpengguna/{id}', [IndexUserController::class, 'destroy'])->name('users.delete');

@@ -443,7 +443,9 @@ body{
                 <b>{{ Auth::user()->name }}</b><br>
                 <small>{{ Auth::user()->email }}</small>
             </div>
-            <img src="{{ asset('images/user.jpeg') }}">
+            <img src="{{ Auth::user()->photo
+            ? asset('storage/profile/' . Auth::user()->photo)
+            : asset('images/user.jpeg') }}">
         </div>
     </div>
 
@@ -454,10 +456,10 @@ body{
     <div class="profile-dropdown" id="profileDropdown">
         <div class="profile-header">
             <div class="profile-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="8" r="4"/>
-                    <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
-                </svg>
+                <img src="{{ Auth::user()->photo
+                        ? asset('storage/profile/' . Auth::user()->photo)
+                        : asset('images/user.jpeg') }}"
+                    style="width:55px;height:55px;border-radius:50%;object-fit:cover;">
             </div>
 
             <div>
@@ -468,7 +470,7 @@ body{
 
         <hr>
 
-        <a href="#" class="dropdown-btn edit-btn">Edit Profil</a>
+        <a href="{{ route('admin.profile') }}" class="dropdown-btn edit-btn">Edit Profil</a>
 
         <form action="{{ route('logout') }}" method="POST">
             @csrf
