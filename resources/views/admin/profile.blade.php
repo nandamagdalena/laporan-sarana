@@ -248,7 +248,7 @@ label:hover .photo-overlay{
 
         <div class="breadcrumb-custom">
             <i class="fa fa-home"></i>
-            <a href="{{ route('user.dashboard') }}">Beranda</a>
+            <a href="{{ route('admin.dashboard') }}">Beranda</a>
             <span>></span>
             <span class="active">Profil</span>
         </div>
@@ -272,7 +272,7 @@ label:hover .photo-overlay{
 
                     <img id="previewImage"
                         src="{{ auth()->user()->photo
-                                ? asset('storage/profile/' . auth()->user()->photo)
+                                ? asset('storage/' . auth()->user()->photo)
                                 : asset('images/siswa.jpeg') }}"
                         class="profile-img"
                         alt="Avatar">
@@ -300,7 +300,8 @@ label:hover .photo-overlay{
         <form action="{{ route('admin.profile.update') }}"
         method="POST"
         enctype="multipart/form-data">
-            @csrf
+        @csrf
+        @method('POST')
 
             <div class="profile-form">
 

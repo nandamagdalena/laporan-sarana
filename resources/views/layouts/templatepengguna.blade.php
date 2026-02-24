@@ -386,16 +386,21 @@
     <!-- Trigger -->
     <div class="user-trigger" id="userTrigger">
 
-    <div class="user-text">
-        <b>Ronaldo Nazario De Lima</b>
-        <span>ronaldofenomeno@gmail.com</span>
+    <div class="topbar">
+
+        <div class="user" id="userToggle">
+            <div class="user-info">
+                <b>{{ Auth::user()->name }}</b><br>
+                <small>{{ Auth::user()->email }}</small>
+            </div>
+            <img id="previewImage"
+                        src="{{ auth()->user()->photo
+                                ? asset('storage/' . auth()->user()->photo)
+                                : asset('images/siswa.jpeg') }}"
+                        class="profile-img"
+                        alt="Avatar">>
+        </div>
     </div>
-
-    <img src="{{ asset('images/siswa.jpeg') }}" class="trigger-avatar">
-
-    <svg class="arrow-icon" viewBox="0 0 24 24">
-        <path d="M6 9l6 6 6-6"/>
-    </svg>
 
 </div>
 
@@ -406,25 +411,24 @@
     <!-- HEADER -->
     <div class="profile-card-header">
 
-        <img src="{{ asset('images/siswa.jpeg') }}">
+        <div class="profile-header">
+            <div class="profile-icon">
+                <img src="{{ Auth::user()->photo
+                        ? asset('storage/' . Auth::user()->photo)
+                        : asset('images/siswa.jpeg') }}"
+                    style="width:55px;height:55px;border-radius:50%;object-fit:cover;">
+            </div>
 
-        <div>
-            <h4>Ronaldo Nazario De Lima</h4>
-
-            <p>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#6b7280">
-                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6z"/>
-                    <path d="M22 6l-10 7L2 6" fill="#6b7280"/>
-                </svg>
-
-                ronaldofenomeno@gmail.com
-            </p>
+            <div>
+                <b>{{ Auth::user()->name }}</b><br>
+                <small>{{ Auth::user()->email }}</small>
+            </div>
         </div>
 
     </div>
 
     <!-- BUTTON -->
-    <a href="#" class="btn-edit">Edit Profil</a>
+    <a href="{{ route('user.profile') }}" class="btn-edit">Edit Profil</a>
 
     <a href="#"
     class="btn-logout"

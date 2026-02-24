@@ -9,6 +9,7 @@ use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\UserProfileController;
 
 Route::get('/', function () {
 
@@ -34,10 +35,6 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         // Route::get('/dashboard', fn () => view('admin.dashboard'))->name('admin.dashboard');
@@ -66,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:user')->prefix('user')->group(function () {
         // Route::get('/dashboard', fn () => view('user.dashboard'))->name('user.dashboard');
         Route::get('/dashboard', [DashboardUserController::class, 'index'])->name('user.dashboard');
+        Route::get('/profile', [UserProfileController::class, 'index'])->name('user.profile');
+        Route::post('/profile/update', [UserProfileController::class, 'update'])->name('user.profile.update');
 
         Route::get('/pengaduan', [AspirationController::class, 'create'])->name('pengaduan.create');
         Route::post('/pengaduan', [AspirationController::class, 'store'])->name('pengaduan.store');

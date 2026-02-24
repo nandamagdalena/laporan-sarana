@@ -82,20 +82,13 @@
     margin:30px auto;     /* bikin ke tengah */
 }
 
-
-/* Header */
-.profile-header{
-    display:flex;
-    align-items:center;
-    gap:16px;
-    margin-bottom:28px;
-}
-
 .profile-img{
-    width:70px;
-    height:70px;
+    width:110px;
+    height:110px;
     border-radius:50%;
     object-fit:cover;
+    border:4px solid #2563eb;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
 .profile-info h5{
@@ -226,7 +219,25 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     visibility: hidden;
 }
 
+.photo-overlay{
+    position:absolute;
+    top:0;
+    left:0;
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    opacity:0;
+    transition:0.3s;
+}
 
+label:hover .photo-overlay{
+    opacity:1;
+}
 
 </style>
 
@@ -253,22 +264,51 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     <div class="profile-card shadow-sm">
 
         {{-- Header --}}
-        <div class="profile-header">
-            <img src="{{ asset('images/siswa.jpeg') }}"
-                 class="profile-img"
-                 alt="Avatar">
+        {{-- FOTO DI ATAS --}}
+        <div style="text-align:center; margin-bottom:25px;">
+            <div style="position:relative; width:110px; height:110px; margin:0 auto;">
 
-            <div class="profile-info">
-                <h5>{{ auth()->user()->name ?? 'Ronaldo Nazario De Lima' }}</h5>
-                <p>{{ auth()->user()->email ?? 'ronaldofenomeno@gmail.com' }}</p>
+                <label for="photoUpload" style="cursor:pointer; display:block; width:110px; height:110px;">
+
+                    <img id="previewImage"
+                        src="{{ auth()->user()->photo
+                                ? asset('storage/' . auth()->user()->photo)
+                                : asset('images/siswa.jpeg') }}"
+                        class="profile-img"
+                        alt="Avatar">
+
+                    <div class="photo-overlay">
+                        <i class="fa fa-camera"></i>
+                    </div>
+
+                </label>
+
             </div>
+
+            <div style="margin-top:12px;">
+                <h5 style="margin:0;font-weight:700;">
+                    {{ auth()->user()->name }}
+                </h5>
+                <p style="margin:4px 0 0;color:#6b7280;font-size:14px;">
+                    {{ auth()->user()->email }}
+                </p>
+            </div>
+
         </div>
 
         {{-- Form --}}
-        <form action="{{ route('user.profil') }}" method="POST">
-            @csrf
+        <form action="{{ route('user.profile.update') }}"
+        method="POST"
+        enctype="multipart/form-data">
+        @csrf
 
             <div class="profile-form">
+
+                <input type="file"
+                id="photoUpload"
+                name="photo"
+                accept="image/*"
+                style="display:none;">
 
                 {{-- KIRI --}}
                 <div>
@@ -302,8 +342,8 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
                         </label>
 
                         <input type="text"
-                               name="phone"
-                               value="{{ auth()->user()->phone ?? '' }}">
+                               name="phone_number"
+                               value="{{ auth()->user()->phone_number ?? '' }}">
                     </div>
 
                 </div>
@@ -327,8 +367,6 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
                             </span>
                         </div>
                     </div>
-
-
 
                     <div class="form-box mt-3">
                         <label>
@@ -376,6 +414,14 @@ togglePassword.addEventListener('click', function () {
 
     icon.classList.toggle('fa-eye');
     icon.classList.toggle('fa-eye-slash');
+});
+
+document.getElementById('photoUpload').addEventListener('change', function(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById('previewImage').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
 });
 </script>
 

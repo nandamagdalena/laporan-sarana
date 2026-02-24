@@ -443,9 +443,12 @@ body{
                 <b>{{ Auth::user()->name }}</b><br>
                 <small>{{ Auth::user()->email }}</small>
             </div>
-            <img src="{{ Auth::user()->photo
-            ? asset('storage/profile/' . Auth::user()->photo)
-            : asset('images/user.jpeg') }}">
+            <img id="previewImage"
+                        src="{{ auth()->user()->photo
+                                ? asset('storage/' . auth()->user()->photo)
+                                : asset('images/siswa.jpeg') }}"
+                        class="profile-img"
+                        alt="Avatar">>
         </div>
     </div>
 
@@ -457,8 +460,8 @@ body{
         <div class="profile-header">
             <div class="profile-icon">
                 <img src="{{ Auth::user()->photo
-                        ? asset('storage/profile/' . Auth::user()->photo)
-                        : asset('images/user.jpeg') }}"
+                        ? asset('storage/' . Auth::user()->photo)
+                        : asset('images/siswa.jpeg') }}"
                     style="width:55px;height:55px;border-radius:50%;object-fit:cover;">
             </div>
 

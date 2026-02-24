@@ -247,17 +247,18 @@
 
     /* FILTER POPUP */
     .filter-popup {
-    position: absolute;
-    right: 0;
-    margin-top: 10px;
-    width: 260px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    z-index: 100;
-    font-family: sans-serif;
-}
+        display: none;
+        position: absolute;
+        right: 0;
+        margin-top: 10px;
+        width: 260px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        z-index: 100;
+        font-family: sans-serif;
+    }
 
 /* Section */
 .filter-title {
