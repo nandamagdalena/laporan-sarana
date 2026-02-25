@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Requests\StoreAspirationRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AspirationsExport;
 
 class AspirationController extends Controller
 {
@@ -144,6 +146,25 @@ class AspirationController extends Controller
                 ->setPaper('A4', 'portrait');
 
         return $pdf->download('laporan-pengaduan-'.$aspiration->id.'.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $start_date = $request->start_date;
+        $end_date   = $request->end_date;
+
+        $query = Aspiration::with(['user', 'category']);
+
+        if (!empty($start_date) && !empty($end_date)) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        $aspirations = $query->get(); // WAJIB ADA GET()
+
+        return Excel::download(
+            new AspirationsExport($aspirations, $start_date, $end_date),
+            'laporan-pengaduan.xlsx'
+        );
     }
 
 }

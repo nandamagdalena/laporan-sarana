@@ -363,6 +363,19 @@
                     </div>
                 </div>
 
+                <form method="GET" action="{{ route('aspirations.export.excel') }}"
+                    style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+
+                    <input type="date" name="start_date" style="padding:6px;">
+                    <span>s/d</span>
+                    <input type="date" name="end_date" style="padding:6px;">
+
+                    <button type="submit"
+                        style="background:#16a34a; color:#fff; border:none; padding:8px 12px; border-radius:6px;">
+                        Export Excel
+                    </button>
+                </form>
+
                 <table id="userTable">
                     <thead>
                         <tr>

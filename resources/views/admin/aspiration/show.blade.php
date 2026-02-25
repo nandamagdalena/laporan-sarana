@@ -199,7 +199,7 @@
                         <div class="form-label">Bukti</div>
 
                         @if($aspiration->image)
-                            <img src="{{ asset('storage/'.$aspiration->image) }}"
+                            <img src="{{ asset('storage/' . $aspiration->image) }}"
                                  style="width:100%;border-radius:10px;border:1px solid #e5e7eb;">
                         @else
                             <p>Tidak ada gambar</p>
