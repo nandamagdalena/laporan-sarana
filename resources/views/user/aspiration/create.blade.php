@@ -68,11 +68,12 @@
         border-radius: 12px;
         height: 200px;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         color: #9ca3af;
         cursor: pointer;
+        position: relative;   /* TAMBAHKAN INI */
+        overflow: hidden;     /* TAMBAHKAN INI */
     }
 
     .upload-box input {
@@ -113,7 +114,6 @@
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,.4);
-        display: none;
         align-items: center;
         justify-content: center;
         z-index: 9999;
@@ -208,10 +208,6 @@
         background: #16a34a;
     }
 
-    .upload-box img{
-        max-width:100%;
-        object-fit:cover;
-    }
 </style>
 
 <div class="main">
@@ -221,13 +217,6 @@
     <div class="breadcrumb">
         🏠 Beranda &gt; <span class="active">Form Pengaduan</span>
     </div>
-
-    {{-- SUCCESS MESSAGE --}}
-    @if(session('success'))
-        <div style="background:#dcfce7;color:#166534;padding:10px;border-radius:6px;margin-bottom:15px;">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <form action="{{ route('pengaduan.store') }}"
           method="POST"
@@ -283,11 +272,13 @@
 
                 <div>
                     <label>Bukti</label>
-                    <label class="upload-box" id="uploadBox">
+                    <div class="upload-box" id="uploadBox">
                         <span id="uploadText">📷 Unggah Gambar</span>
-                        <img id="previewImage" style="display:none; max-height:180px; border-radius:8px;" />
-                        <input type="file" name="image" id="imageInput" accept="image/*">
-                    </label>
+                        <img id="previewUpload"
+                            style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" />
+                    </div>
+
+                    <input type="file" name="image" id="imageInput" accept="image/*" hidden>
                 </div>
 
             </div>
@@ -300,49 +291,55 @@
     </form>
 </div>
 
-<div class="popup-overlay" id="popupSuccess">
+<div class="popup-overlay"
+     id="popupSuccess"
+     style="display: {{ session('success') ? 'flex' : 'none' }};">
     <div class="popup-box"> <img src="{{ asset('images/senyum.png') }}" class="popup-image">
         <h4>Terima kasih atas laporan Anda!</h4> <p>Pengaduan sarana sekolah telah berhasil dikirim dan sedang menunggu peninjauan.</p>
-        <img src="{{ asset('images/popup.png') }}" class="popup"> <button class="btn-ok" id="btnOk">OK</button>
+        <img src="{{ asset('images/popup.png') }}" class="popup">
+        <button type="button" class="btn-ok" id="btnOk">OK</button>
     </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    // AUTO SHOW POPUP JIKA SUCCESS
-    @if(session('success'))
-        document.getElementById('popupSuccess').style.display = 'flex';
-    @endif
+    const imageInput = document.getElementById('imageInput');
+    const uploadBox = document.getElementById('uploadBox');
+    const preview = document.getElementById('previewUpload');
+    const text = document.getElementById('uploadText');
 
-    // BUTTON OK (TUTUP POPUP)
+    const popup = document.getElementById('popupSuccess');
     const btnOk = document.getElementById('btnOk');
-    if (btnOk) {
-        btnOk.addEventListener('click', function () {
-            window.location.href = "{{ route('pengaduan.mine') }}";
+
+    // klik box buka file
+    if(uploadBox){
+        uploadBox.addEventListener('click', function () {
+            imageInput.click();
         });
     }
 
-    // IMAGE PREVIEW
-    const imageInput = document.getElementById('imageInput');
-    if (imageInput) {
+    // preview
+    if(imageInput){
         imageInput.addEventListener('change', function(e) {
-
             const file = e.target.files[0];
-            const preview = document.getElementById('previewImage');
-            const text = document.getElementById('uploadText');
-
             if (file) {
                 const reader = new FileReader();
-
                 reader.onload = function(event) {
                     preview.src = event.target.result;
                     preview.style.display = "block";
                     text.style.display = "none";
-                }
-
+                };
                 reader.readAsDataURL(file);
             }
+        });
+    }
+
+    // tombol OK
+    if(btnOk){
+        btnOk.addEventListener('click', function () {
+            popup.style.display = "none";
+            window.location.href = "{{ route('pengaduan.mine') }}";
         });
     }
 
