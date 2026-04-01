@@ -336,6 +336,67 @@ body{
     opacity:0.9;
 }
 
+/* ===== DROPDOWN ===== */
+.dropdown-toggle{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    color:#6b7280;
+    transition:0.2s;
+}
+
+.dropdown-toggle:hover{
+    background:#f1f5f9;
+}
+
+.dropdown-toggle svg{
+    width:22px;
+    height:22px;
+    fill:#9ca3af;
+}
+
+/* PANAH */
+.dropdown-toggle .arrow{
+    margin-left:auto;
+    width:18px;
+    height:18px;
+    transition:0.3s;
+}
+
+/* MENU */
+.dropdown-menu{
+    max-height:0;
+    overflow:hidden;
+    transition:0.3s ease;
+    padding-left:34px;
+}
+
+/* ISI */
+.dropdown-menu a{
+    display:block;
+    padding:8px 10px;
+    font-size:13px;
+    color:#6b7280;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.dropdown-menu a:hover{
+    background:#eef4ff;
+    color:#0b4da2;
+}
+
+/* ACTIVE */
+.dropdown.open .dropdown-menu{
+    max-height:300px;
+}
+
+.dropdown.open .arrow{
+    transform:rotate(90deg);
+}
 </style>
 </head>
 
@@ -388,27 +449,49 @@ body{
             Daftar Pengguna
         </a>
 
-
-
         <!-- ===== PENGADUAN ===== -->
         <h4>Pengaduan</h4>
 
-        <a href="{{ route('aspiration.index') }}"
-        class="menu-pengaduan {{ request()->routeIs('admin.daftarpengaduan') ? 'active' : '' }}">
+        <!-- BUTTON DROPDOWN -->
+        <div class="dropdown">
+            <div class="dropdown-toggle" onclick="togglePengaduan()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                    <path d="M14 2v6h6"/>
+                </svg>
+                <span>Pengaduan</span>
 
-            <!-- ICON DOKUMEN SEPERTI GAMBAR -->
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
-                <path d="M14 2v6h6"/>
-                <rect x="8" y="10" width="6" height="2" rx="1"/>
-                <rect x="8" y="14" width="8" height="2" rx="1"/>
-                <rect x="8" y="18" width="5" height="2" rx="1"/>
-            </svg>
+                <!-- ICON PANAH -->
+                <svg class="arrow" viewBox="0 0 24 24">
+                    <path d="M9 6l6 6-6 6"/>
+                </svg>
+            </div>
 
-            Daftar Pengaduan
-        </a>
+            <!-- ISI DROPDOWN -->
+            <div class="dropdown-menu" id="pengaduanMenu">
 
+                <a href="{{ route('aspiration.index') }}">
+                    Daftar Pengaduan
+                </a>
 
+                <a href="{{ route('aspirations.menunggu') }}">
+                    Menunggu
+                </a>
+
+                <a href="{{ route('aspirations.diproses') }}">
+                    Diproses
+                </a>
+
+                <a href="{{ route('aspirations.selesai') }}">
+                    Selesai
+                </a>
+
+                <a href="{{ route('aspirations.ditolak') }}">
+                    Ditolak
+                </a>
+
+            </div>
+        </div>
 
         <!-- KATEGORI (FOLDER) -->
         <h4>Kategori</h4>
@@ -523,6 +606,21 @@ function closeProfile(){
 }
 
 profileOverlay.addEventListener("click", closeProfile);
+
+function togglePengaduan(){
+    const dropdown = document.querySelector('.dropdown');
+    dropdown.classList.toggle('open');
+}
+
+window.addEventListener('load', function () {
+    const currentRoute = "{{ Route::currentRouteName() }}";
+
+    if (
+        currentRoute.includes('aspiration')
+    ) {
+        document.querySelector('.dropdown').classList.add('open');
+    }
+});
 
 </script>
 

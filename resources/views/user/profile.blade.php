@@ -270,7 +270,7 @@ label:hover .photo-overlay{
 
                 <label for="photoUpload" style="cursor:pointer; display:block; width:110px; height:110px;">
 
-                    <img id="previewImage"
+                    <img id="previewPhoto"
                         src="{{ auth()->user()->photo
                                 ? asset('storage/' . auth()->user()->photo)
                                 : asset('images/siswa.jpeg') }}"
@@ -419,7 +419,7 @@ togglePassword.addEventListener('click', function () {
 document.getElementById('photoUpload').addEventListener('change', function(event) {
     const reader = new FileReader();
     reader.onload = function(){
-        document.getElementById('previewImage').src = reader.result;
+        document.getElementById('previewPhoto').src = reader.result;
     }
     reader.readAsDataURL(event.target.files[0]);
 });

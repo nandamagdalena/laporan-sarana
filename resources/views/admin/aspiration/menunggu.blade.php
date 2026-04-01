@@ -318,7 +318,7 @@
         <div class="main">
             <h3>Daftar Pengaduan</h3>
             <div class="breadcrumb">
-                🏠 <a href="{{ route('admin.dashboard') }}">Beranda</a> &gt; <span class="active">Daftar Pengaduan</span>
+                🏠 <a href="{{ route('admin.dashboard') }}">Beranda</a> &gt; <span class="active">Menunggu</span>
 
             </div>
 
@@ -344,77 +344,24 @@
 
                         <!-- FILTER POPUP -->
                         <div class="filter-popup" id="filterPopup">
-                            <form method="GET" action="{{ route('aspiration.index') }}">
+                            <div class="filter-header"><strong>Filter</strong></div>
 
-                                <div class="filter-header"><strong>Filter</strong></div>
+                            <div class="filter-section">
+                                <div class="filter-title">Kategori</div>
+                                <label><input type="checkbox" value="Kelas"> Kelas</label>
+                                <label><input type="checkbox" value="UKS"> UKS</label>
+                                <label><input type="checkbox" value="Ruang Guru"> Ruang Guru</label>
+                                <label><input type="checkbox" value="Toilet"> Toilet</label>
+                                <label><input type="checkbox" value="Koperasi"> Koperasi</label>
+                            </div>
 
-                                <!-- ===== KATEGORI ===== -->
-                                <div class="filter-section">
-                                    <div class="filter-title">Kategori</div>
-
-                                    @foreach($categories as $category)
-                                        <label>
-                                            <input type="checkbox"
-                                                name="category[]"
-                                                value="{{ $category->id }}"
-                                                {{ in_array($category->id, request('category', [])) ? 'checked' : '' }}>
-                                            {{ $category->name }}
-                                        </label>
-                                    @endforeach
-                                </div>
-
-                                <!-- ===== STATUS ===== -->
-                                <div class="filter-section">
-                                    <div class="filter-title">Status</div>
-
-                                    <label>
-                                        <input type="radio" name="status" value="menunggu"
-                                        {{ request('status') == 'menunggu' ? 'checked' : '' }}>
-                                        Menunggu
-                                    </label>
-
-                                    <label>
-                                        <input type="radio" name="status" value="diproses"
-                                        {{ request('status') == 'diproses' ? 'checked' : '' }}>
-                                        Diproses
-                                    </label>
-
-                                    <label>
-                                        <input type="radio" name="status" value="selesai"
-                                        {{ request('status') == 'selesai' ? 'checked' : '' }}>
-                                        Selesai
-                                    </label>
-
-                                    <label>
-                                        <input type="radio" name="status" value="ditolak"
-                                        {{ request('status') == 'ditolak' ? 'checked' : '' }}>
-                                        Ditolak
-                                    </label>
-                                </div>
-
-                                <!-- ===== BUTTON ===== -->
-                                <div class="filter-footer">
-                                    <a href="{{ route('aspiration.index') }}" class="btn-reset">Reset</a>
-                                    <button type="submit" class="btn-apply">Terapkan</button>
-                                </div>
-
-                            </form>
+                            <div class="filter-footer">
+                                <button class="btn-reset" id="resetFilter">Reset</button>
+                                <button class="btn-apply" id="applyFilter">Terapkan</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <form method="GET" action="{{ route('aspirations.export.excel') }}"
-                    style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-
-                    <input type="date" name="start_date" style="padding:6px;">
-                    <span>s/d</span>
-                    <input type="date" name="end_date" style="padding:6px;">
-
-                    <button type="submit"
-                        style="background:#16a34a; color:#fff; border:none; padding:8px 12px; border-radius:6px;">
-                        Export Excel
-                    </button>
-                </form>
 
                 <table id="userTable">
                     <thead>
